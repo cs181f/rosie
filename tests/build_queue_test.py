@@ -22,11 +22,17 @@ BLACKBOX TESTING:
     I include no black box tests.
 """
 
+# Library to enable mocking of classes
+from mock import patch, MagicMock, Mock
+
 import unittest
-from models import (
+import Queue
+import threading
+from rosie.models import (
     BuildQueue
 )
 
+@patch('rosie.models.Build')
 class BuildQueueTest(unittest.TestCase):
     """Test cases for Build Queue"""
     @classmethod
@@ -71,7 +77,7 @@ class BuildQueueTest(unittest.TestCase):
         self.assertTrue(self.queue.has_builds())
         self.assertEqual(1, self.queue.next_build())
 
-    def test_can_be_accessed_from_multiple_threads(self):
+    def test_can_be_accessed_from_multiple_threads(self, Build):
         """ Verifies that the Queue can be accessed and updated
         from multiple threads (ApplicationServer, WorkerThread for example)
 
@@ -81,7 +87,7 @@ class BuildQueueTest(unittest.TestCase):
         that the state of the BuildQueue is correct after both Threads are terminated
     .
         """
-    class TestThread(threading.Thread):
+        class TestThread(threading.Thread):
             def __init__(self, queue, elements):
                 self.queue = queue
                 self.elements = elements
@@ -93,7 +99,7 @@ class BuildQueueTest(unittest.TestCase):
                     build._id = el
                     self.queue.add_build(build)
 
-    elements = range(10)
+        elements = range(10)
         thread_1 = TestThread(self.queue, elements[:5])
         thread_2 = TestThread(self.queue, elements[5:])
 
