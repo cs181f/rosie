@@ -48,3 +48,4 @@ class BuildQueue(Queue):
     """
     def add_build(self, build):
         # returns boolean of whether build was successfully added
+        return self.put(build._id)
