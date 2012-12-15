@@ -50,8 +50,13 @@ class WorkerThreadTest(unittest.TestCase):
 
     def test_init_saves_queue(self):
         """ Verifies that WorkerThread saves BuildQueue from constructor """
+        self.assertEqual(self.thread.queue, self.queue)
+
     def test_worker_stops_if_queue_empty(self):
         """ Verifies that WorkerThread shuts down if BuildQueue is empty """
+        self.thread.start()
+        self.thread.join()
+
     def test_worker_reads_first_id_if_queue_not_empty(self):
         """ Verifies that WorkerThread gets first ID on BuildQueue
         if it is not empty """
