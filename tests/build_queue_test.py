@@ -93,3 +93,17 @@ class BuildQueueTest(unittest.TestCase):
                     build._id = el
                     self.queue.add_build(build)
 
+    lements = range(10)
+        thread_1 = TestThread(self.queue, elements[:5])
+        thread_2 = TestThread(self.queue, elements[5:])
+
+        thread_1.start()
+        thread_2.start()
+        thread_1.join()
+        thread_2.join()
+
+        while self.queue.has_builds():
+            build_id = self.queue.next_build()
+            self.assertTrue(elements.count(build_id) == 1)
+            elements.remove(build_id)
+
