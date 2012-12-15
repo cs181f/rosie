@@ -20,13 +20,19 @@ BLACKBOX TESTING:
 
 """
 
+# Library to enable mocking of classes
+from mock import patch, MagicMock, Mock
 
 import unittest
-from models import (
+import json
+import threading
+import subprocess, os
+from rosie.models import (
     WorkerThread,
-    Build,
-    BuildQueue
+    BuildQueue,
+    Build
 )
+from datetime import datetime
 
 class WorkerThreadTest(unittest.TestCase):
     """Test cases for Worker Thread"""
