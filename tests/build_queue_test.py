@@ -81,4 +81,15 @@ class BuildQueueTest(unittest.TestCase):
         that the state of the BuildQueue is correct after both Threads are terminated
     .
         """
+    class TestThread(threading.Thread):
+            def __init__(self, queue, elements):
+                self.queue = queue
+                self.elements = elements
+                threading.Thread.__init__(self)
+
+            def run(self):
+                for el in self.elements:
+                    build = Build()
+                    build._id = el
+                    self.queue.add_build(build)
 
