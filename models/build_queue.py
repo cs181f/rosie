@@ -24,9 +24,13 @@ class BuildQueue(Queue):
         # calls standard Queue constructor
         Queue.__init__(self)
 
+    def __repr__(self):
+        return "<BuildQueue %s>" % self.queue
+
     """ PUBLIC: Check whether there are any builds in the queue """
     def has_builds(self):
         # return True or False
+        return not self.empty()
 
     """ PUBLIC: Dequeue Build.id of next build.
 
