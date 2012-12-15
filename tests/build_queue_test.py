@@ -62,8 +62,15 @@ class BuildQueueTest(unittest.TestCase):
         with self.assertRaises(Queue.Empty):
             self.queue.next_build()
 
-    def test_add_build_adds_build(self):
+    def test_add_build_adds_build(self, Build):
         """ Verifies wrapper for Queue.push() is correct """
+        self.assertFalse(self.queue.has_builds())
+        build = Build()
+        build._id = 1
+        self.queue.add_build(build)
+        self.assertTrue(self.queue.has_builds())
+        self.assertEqual(1, self.queue.next_build())
+
     def test_can_be_accessed_from_multiple_threads(self):
         """ Verifies that the Queue can be accessed and updated
         from multiple threads (ApplicationServer, WorkerThread for example)
