@@ -48,8 +48,6 @@ class WorkerThreadTest(unittest.TestCase):
     def tearDown(self):
         """ Nothing needs to be torn down """
 
-    def test_worker_runs_in_seperate_thread(self):
-        """ Verifies that WorkerThread does not block applications server """
     def test_init_saves_queue(self):
         """ Verifies that WorkerThread saves BuildQueue from constructor """
     def test_worker_stops_if_queue_empty(self):
