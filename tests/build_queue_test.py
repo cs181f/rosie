@@ -93,7 +93,7 @@ class BuildQueueTest(unittest.TestCase):
                     build._id = el
                     self.queue.add_build(build)
 
-    lements = range(10)
+    elements = range(10)
         thread_1 = TestThread(self.queue, elements[:5])
         thread_2 = TestThread(self.queue, elements[5:])
 
