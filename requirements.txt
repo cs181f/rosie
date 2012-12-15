@@ -1,0 +1,14 @@
+Flask==0.8
+Flask-Testing==0.3
+Jinja2==2.6
+Werkzeug==0.8.3
+amqplib==1.0.2
+anyjson==0.3.3
+apns==1.1.1
+billiard==2.7.3.12
+blinker==1.2
+kombu==2.4.0
+mock==0.8.0
+nose==1.1.2
+requests==0.10.6
+mongokit
