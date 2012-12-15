@@ -65,12 +65,15 @@ class WorkerThreadTest(unittest.TestCase):
         build = Build()
         build._id = 1
 
-        self.queue.add_build(build)
+        with patch.object(WorkerThread, '_retrieve_build') as mock1:
+            mock1.return_value = build
+            self.thread = WorkerThread(self.queue)
+            self.queue.add_build(build)
 
-        self.thread.start()
-        self.thread.join()
+            self.thread.start()
+            self.thread.join()
 
-        self.assertEqual(self.queue.current_build._id, 1)
+        self.assertEqual(self.thread.current_build, build)
 
     def test_configs_are_accurately_read(self):
         """ Tests that configs for WorkerThread are read correctly from the
