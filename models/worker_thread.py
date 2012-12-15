@@ -63,7 +63,7 @@ class WorkerThread(threading.Thread()):
         @param queue is the BuildQueue that contains the Builds to be built
         @param configs is the configuration for the Rosie server
     """
-    def __init__(self, queue, configs):
+    def __init__(self, queue, configs=dict()):
         # calls standard Thread constructor
         threading.Thread.__init__(self)
 
@@ -71,11 +71,13 @@ class WorkerThread(threading.Thread()):
         # stores BuildQueue in private variable
         self.configs = configs
         self.queue = queue
-        self.github_link = configs.github_link
+        self.github_link = configs.get('github_link', '')
         self.current_build = None
 
     def run(self):
         """ PUBLIC: Starts worker in new Thread """
+        if self.queue.has_builds():
+            return True
 
     def retrieve_build(id):
         """ PRIVATE: Retrieves build given build.ID
