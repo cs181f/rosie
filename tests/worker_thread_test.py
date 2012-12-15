@@ -57,9 +57,21 @@ class WorkerThreadTest(unittest.TestCase):
         self.thread.start()
         self.thread.join()
 
-    def test_worker_reads_first_id_if_queue_not_empty(self):
+    @patch('rosie.models.Build')
+    def test_worker_reads_first_id_if_queue_not_empty(self, Build):
         """ Verifies that WorkerThread gets first ID on BuildQueue
         if it is not empty """
+
+        build = Build()
+        build._id = 1
+
+        self.queue.add_build(build)
+
+        self.thread.start()
+        self.thread.join()
+
+        self.assertEqual(self.queue.current_build._id, 1)
+
     def test_configs_are_accurately_read(self):
         """ Tests that configs for WorkerThread are read correctly from the
         configuration file during initialization """
