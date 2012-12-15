@@ -39,6 +39,7 @@ class BuildQueue(Queue):
     """
     def next_build(self):
         # returns Build ID of next Build in the queue
+        return self.get_nowait()
 
     """ PUBLIC: Add a build to the BuildQueue. Accepts a Build object
         but only stores the Build.id in the BuildQueue.
