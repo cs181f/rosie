@@ -40,10 +40,16 @@ class BuildQueueTest(unittest.TestCase):
     def tearDown(self):
         """ Nothing needs to be torn down """
 
-    def test_has_builds_returns_correct_true(self):
+    def test_has_builds_returns_correct_true(self, Build):
         """ Verifies wrapper for Queue.empty() is correct """
-    def test_has_builds_returns_correct_false(self):
+        self.queue.add_build(Build())
+        self.queue.add_build(Build())
+        self.assertTrue(self.queue.has_builds())
+
+    def test_has_builds_returns_correct_false(self, Build):
         """ Verifies wrapper for Queue.empty() is correct """
+        self.assertFalse(self.queue.has_builds())
+
     def test_next_build_returns_if_if_builds(self):
         """ Verifies wrapper for Queue.get() is correct """
     def test_next_build_returns_false_if_empty(self):
