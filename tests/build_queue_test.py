@@ -50,10 +50,18 @@ class BuildQueueTest(unittest.TestCase):
         """ Verifies wrapper for Queue.empty() is correct """
         self.assertFalse(self.queue.has_builds())
 
-    def test_next_build_returns_if_if_builds(self):
+    def test_next_build_returns_build_id_if_builds(self, Build):
         """ Verifies wrapper for Queue.get() is correct """
-    def test_next_build_returns_false_if_empty(self):
+        build = Build()
+        build._id = 2
+        self.queue.add_build(build)
+        self.assertEqual(2, self.queue.next_build())
+
+    def test_next_build_raises_exception_if_empty(self, Build):
         """ Verifies wrapper for Queue.get() is correct """
+        with self.assertRaises(Queue.Empty):
+            self.queue.next_build()
+
     def test_add_build_adds_build(self):
         """ Verifies wrapper for Queue.push() is correct """
     def test_can_be_accessed_from_multiple_threads(self):
