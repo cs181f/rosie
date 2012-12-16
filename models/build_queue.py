@@ -12,7 +12,7 @@ http://docs.python.org/2/library/queue.html
 """
 
 # Python stdlib requirements for Queue
-import Queue
+from Queue import Queue
 import datetime
 
 # BuildQueue inherits from standard multithreaded Python Queue
