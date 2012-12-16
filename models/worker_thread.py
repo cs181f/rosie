@@ -92,6 +92,8 @@ class WorkerThread(threading.Thread):
                 self.current_build.status = 2
                 self.current_build.error = result['error']
                 self.current_build.save()
+                self._post_to_github(self.current_build)
+
     def _retrieve_build(self, id):
         """ PRIVATE: Retrieves build given build.ID
 
