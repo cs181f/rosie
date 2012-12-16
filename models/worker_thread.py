@@ -55,6 +55,7 @@ This module only uses:
 """
 import requests
 from build import Build
+from datetime import datetime
 
 class BuildNotFoundException(Exception):
     def __init__(self, value):
@@ -82,7 +83,7 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         """ PUBLIC: Starts worker in new Thread """
-        if self.queue.has_builds():
+        while self.queue.has_builds():
             self.current_build = self._retrieve_build(self.queue.next_build())
             result = self._build(self.current_build)
             if result['success']:
@@ -108,6 +109,7 @@ class WorkerThread(threading.Thread):
     def _build(self, build):
         """ PRIVATE: wrapper for bash build """
         result = self._bash_build(build)
+        build.build_time = datetime.now()
         if type(result) == str:
             return dict(success=False, error=result)
         else:
@@ -144,7 +146,7 @@ class WorkerThread(threading.Thread):
         """
         return True
 
-    def _post_to_github(results):
+    def _post_to_github(self, results):
         """ PRIVATE: posts build results to Github
 
         This method will primarily be using the request module to communicate
