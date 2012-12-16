@@ -79,9 +79,19 @@ class WorkerThreadTest(unittest.TestCase):
         """ Verifies that WorkerThread can retrieve Build from Mongo with ID
 
         SETUP:
-            Connect to MongoDB
-            Store Build
+            Mock Build.find_one method
         """
+
+        with patch.object(Build, 'find_one') as mock_method:
+            build = Build()
+            build._id = 1
+            mock_method.return_value = build
+
+            self.queue.add_build(build)
+
+            self.assertEqual(self.thread._retrieve_build(1), build)
+            mock_method.assert_called_once_with(dict(_id=1))
+
     def test_build_retrieved_fails_well(self):
         """ Verifies that WorkerThread provides appropriate exception when
         no such Build exists in MongoDB.
