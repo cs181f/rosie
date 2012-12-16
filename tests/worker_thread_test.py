@@ -242,9 +242,36 @@ class WorkerThreadTest(unittest.TestCase):
         are built in the correct order
 
         SETUP:
-            Connect to MongoDB
-            Store multiple builds
-            Push builds IDs into BuildQueue
+            Mock multiple builds
         """
+        with patch.object(Build, 'save') as save:
+            save.return_value = True
+            builds = []
+            for i in range(5):
+                build = Build()
+                build._id = i
+                builds.append(build)
+
+            with patch.object(WorkerThread, '_retrieve_build') as mock1:
+                def side_effect(key):
+                    return builds[key]
+
+                mock1.side_effect = side_effect
+
+                with patch.object(WorkerThread, '_bash_build') as mock2:
+                    mock2.return_value = True
+
+                    with patch.object(WorkerThread, '_post_to_github') as mock3:
+                        mock3.return_value = True
+                        self.thread = WorkerThread(self.queue)
+
+                        for b in builds:
+                            self.queue.add_build(b)
+
+                        self.thread.start()
+                        self.thread.join()
+
+                        for i in range(4):
+                            self.assertTrue(builds[i].build_time < builds[i+1].build_time)
 
 
