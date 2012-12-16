@@ -104,10 +104,9 @@ class WorkerThreadTest(unittest.TestCase):
         with patch.object(Build, 'find_one') as mock_method:
             mock_method.return_value = None
 
-            self.assertRaises(BuildNotFoundException, self.thread._retrieve_build(1))
+            with self.assertRaises(BuildNotFoundException):
+                self.thread._retrieve_build(1)
 
-
-        self.assertFalse(True)
         mock_method.assert_called_once_with(dict(_id=1))
 
     def test_build_returns_error_result_if_fail(self):
