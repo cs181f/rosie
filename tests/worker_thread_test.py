@@ -109,10 +109,20 @@ class WorkerThreadTest(unittest.TestCase):
 
         mock_method.assert_called_once_with(dict(_id=1))
 
-    def test_build_returns_error_result_if_fail(self):
+    @patch('rosie.models.Build')
+    def test_build_returns_error_result_if_fail(self, Build):
         """ Verifies that WorkerThread.build returns a valid error result if
         the build failed
         """
+        with patch.object(WorkerThread, '_bash_build') as mock_method:
+            build = Build()
+            self.thread = WorkerThread(self.queue)
+
+            mock_method.return_value = "There was an error processing your result."
+
+            result = self.thread._build(build)
+            self.assertEqual(result, dict(success=False, error=mock_method.return_value))
+
     def test_build_returns_success_result_if_pass(self):
         """ Verifies that WorkerThread.build returns a valid success result if
             the build succeeded
