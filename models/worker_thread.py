@@ -57,7 +57,7 @@ import requests
 from build import Build
 
 # WorkerThread inherits from the Python stdlib threading.Thread class.
-class WorkerThread(threading.Thread()):
+class WorkerThread(threading.Thread):
     """PUBLIC: Constructor for WorkerThread class
 
         @param queue is the BuildQueue that contains the Builds to be built
