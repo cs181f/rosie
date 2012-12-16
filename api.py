@@ -18,6 +18,8 @@ from models import (
 )
 
 api = Flask(__name__)
+api.config.from_object('config')
+
 worker = None
 queue = BuildQueue()
 
@@ -37,7 +39,7 @@ def build():
     queue.add_build(build_id)
     configs = app.open_resource('')
     if (worker is None or worker.current_build is None):
-        worker = Worker(queue, {})
+        worker = Worker(queue, api.config)
         worker.start()
 
 ###HTML Endpoints###
