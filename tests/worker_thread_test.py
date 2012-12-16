@@ -27,6 +27,7 @@ import unittest
 import json
 import threading
 import subprocess, os
+import requests
 from rosie.models import (
     WorkerThread,
     BuildQueue,
@@ -274,3 +275,42 @@ class WorkerThreadTest(unittest.TestCase):
                         for i in range(4):
                             self.assertTrue(builds[i].build_time < builds[i+1].build_time)
 
+    def test_post_to_github_posts_to_correct_url(self):
+        configs = dict(GITHUB_ID='github_id', GITHUB_SECRET='github_secret')
+
+        build = Build()
+        build.error = "error string"
+        build.ref = 'build_ref'
+
+        build.repository.name = 'test_repo'
+        build.repository.owner.name = 'jesse'
+
+        self.thread = WorkerThread(self.queue, configs)
+
+        with patch.object(requests, 'post') as mock:
+            mock.return_value = True
+
+            self.assertTrue(self.thread._post_to_github(build))
+
+        expected_url = 'https://api.github.com/repos/jesse/test_repo/issues?client_id=github_id&client_secret=github_secret'
+        expected_data = {'body': 'error string', 'title': 'Build failure on ref build_ref'}
+        mock.assert_called_once_with(expected_url, expected_data)
+
+    def test_post_to_github_without_credentials_returns_false(self):
+        configs = dict()
+
+        build = Build()
+        build.error = "error string"
+        build.ref = 'build_ref'
+
+        build.repository.name = 'test_repo'
+        build.repository.owner.name = 'jesse'
+
+        self.thread = WorkerThread(self.queue, configs)
+
+        with patch.object(requests, 'post') as mock:
+            mock.return_value = True
+
+            self.assertFalse(self.thread._post_to_github(build))
+
+        mock.assert_not_called()

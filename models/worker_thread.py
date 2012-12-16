@@ -146,7 +146,7 @@ class WorkerThread(threading.Thread):
         """
         return True
 
-    def _post_to_github(self, results):
+    def _post_to_github(self, build):
         """ PRIVATE: posts build results to Github
 
         This method will primarily be using the request module to communicate
@@ -156,3 +156,18 @@ class WorkerThread(threading.Thread):
 
         returns True if Github is correctly updated, False otherwise
         """
+
+        github_id = self.configs.get('GITHUB_ID', None)
+        github_secret = self.configs.get('GITHUB_SECRET', None)
+
+        if not github_id or not github_secret:
+            return False
+
+        base_url = "https://api.github.com/repos/%s/%s/issues" % (build.repository.owner.name, build.repository.name)
+        auth_string = "?client_id=%s&client_secret=%s" % (github_id, github_secret)
+        url = base_url + auth_string
+
+        title = "Build failure on ref %s" % build.ref
+        body = build.error
+        data = dict(title=title, body=body)
+        return requests.post(url, data)
