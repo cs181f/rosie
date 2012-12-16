@@ -96,8 +96,14 @@ class WorkerThread(threading.Thread):
         if build is None: raise BuildNotFoundException("Build was not in database.")
         return build
 
-    def build(build):
-        """ PRIVATE: Builds build
+    def _build(self, build):
+        """ PRIVATE: wrapper for bash build """
+        result = self._bash_build(build)
+        if type(result) == str:
+            return dict(success=False, error=result)
+
+    def _bash_build(self, build):
+        """ PRIVATE: Builds build in bash
 
         When we 'build' a build, there are three primary steps, all of which we
         'bash out' for, which essentially means we run arbitrary code in the shell
@@ -125,6 +131,7 @@ class WorkerThread(threading.Thread):
 
         returns build results
         """
+        return True
 
     def save_build_results(results):
         """ PRIVATE: stores build results in MongoDB
