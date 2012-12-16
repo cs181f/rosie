@@ -6,6 +6,12 @@ http://namlook.github.com/mongokit/index.html
 
 from mongokit import Document, Connection
 
+class BuildErrorException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 # sets up the connection to the database.
 connection = Connection()
 
@@ -69,13 +75,27 @@ class Build(Document):
     """
 
     # __init__
-    def __init__(self, json):
-        """ takes in a json string
-            Creates a new object
+    def __init__(self, json=None, id=None):
+        """ takes in a json string or an id number
+            Creates a new Build
+            and either fills it with json and saves it away
+            or grabs the indicated Build from the database
         """
+        
+        # if both optional fields are provided, raise an error
+        if json is not None and id is not None:
+            raise BuildErrorException("Cannot use both json and id args.")
+        
+        # initializer for the parent Document class
         Document.__init__(self)
-        self.from_json(json)
-        self.validate()
+        
+        if json is not None:
+            self.from_json(json) # provided by mongokit
+        elif id is not None:
+            self.validate()      # provided by mongokit
+        # note that if neither json nor id are provided, it
+        # creates an empty Build with no data. This is useful
+        # for testing mostly.
     
     # save
     def save(self):
@@ -88,14 +108,19 @@ class Build(Document):
             in the build queue.
         """
         # calls self.validate()
+        self.validate()
+        
         # this is the PyMongo save method:
         return self.collection.save(self, safe=safe, *args, **kwargs)
 
     # update_with_results
     def update_with_results(self, results):
-        # updates fields
-        # calls self.save()
+        self['error'] = results
         
+        self.save() # self.save() handles validation for me
+        
+        # no return value
+    
     # The following methods are documented here:
     #    http://namlook.github.com/mongokit/query.html
     
