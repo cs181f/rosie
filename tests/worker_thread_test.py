@@ -30,7 +30,8 @@ import subprocess, os
 from rosie.models import (
     WorkerThread,
     BuildQueue,
-    Build
+    Build,
+    BuildNotFoundException
 )
 from datetime import datetime
 
@@ -97,8 +98,18 @@ class WorkerThreadTest(unittest.TestCase):
         no such Build exists in MongoDB.
 
         SETUP:
-            Connect to MongoDB
+            Connect to Build.find_one method
         """
+
+        with patch.object(Build, 'find_one') as mock_method:
+            mock_method.return_value = None
+
+            self.assertRaises(BuildNotFoundException, self.thread._retrieve_build(1))
+
+
+        self.assertFalse(True)
+        mock_method.assert_called_once_with(dict(_id=1))
+
     def test_build_returns_error_result_if_fail(self):
         """ Verifies that WorkerThread.build returns a valid error result if
         the build failed
