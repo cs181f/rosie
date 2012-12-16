@@ -81,16 +81,19 @@ def settings():
 
 @api.route('/check_settings', methods=['GET'])
 def get_settings():
-    return 'test'
+    return jsonify(api.config)
     #returns the contents of the settings file
     #this is to populate the web interface and
     #to provide information at the command line
 
 @api.route('/blame', methods=['POST'])
 def blame():
-    return 'test'
-    #This endpoint returns that list sorted with the highest number of broken
-    #commits first.
+    bad_people = dict(0)
+    for build in Build.find():
+        if build.error is not None:
+            bad_people[build.author.name] += 1
+
+    return jsonify(bad_people)
 
 @api.route('/builds/new', methods=['POST'])
 def rebuild():
@@ -98,6 +101,11 @@ def rebuild():
     id = request.form['build_id']
     #looks up a build by that ID
     #rebuilds build to see if it fails new tests
+    queue.add_build(build_id)
+    configs = app.open_resource('')
+    if (worker is None or worker.current_build is None):
+        worker = Worker(queue, api.config)
+        worker.start()
 
 if __name__ == '__main__':
     api.run()
