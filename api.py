@@ -73,12 +73,6 @@ def get_builds():
     #returns data for all builds
     return jsonify(builds)
 
-@api.route('/settings', methods=['POST'])
-def settings():
-    return 'test'
-    #accepts settings changes 
-    #modifies config file with appropriate changes
-
 @api.route('/check_settings', methods=['GET'])
 def get_settings():
     return jsonify(api.config)
