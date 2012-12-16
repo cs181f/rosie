@@ -274,4 +274,3 @@ class WorkerThreadTest(unittest.TestCase):
                         for i in range(4):
                             self.assertTrue(builds[i].build_time < builds[i+1].build_time)
 
-
