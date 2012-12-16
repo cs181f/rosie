@@ -166,9 +166,28 @@ class WorkerThreadTest(unittest.TestCase):
         """ Verifies that correct Build is updated in MongoDB on failing build.
 
         SETUP:
-            Connect to MongoDB
-            Store Build
+            Mock save on Build
         """
+        with patch.object(Build, 'save') as save:
+            save.return_value = True
+            build = Build()
+            build._id = 1
+
+            with patch.object(WorkerThread, '_retrieve_build') as mock1:
+                mock1.return_value = build
+
+                with patch.object(WorkerThread, '_bash_build') as mock2:
+                    self.thread = WorkerThread(self.queue)
+                    self.queue.add_build(build)
+                    mock2.return_value = "There was an error building your build"
+
+                    self.thread.start()
+                    self.thread.join()
+
+                    build.save.assert_called_once()
+                    self.assertEqual(build.status, 2)
+                    self.assertEqual(build.error, mock2.return_value)
+
     def test_build_sent_to_github_if_fail(self):
         """ Verifies that build failure information is sent to Github as a new
         issue
