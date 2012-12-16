@@ -216,6 +216,26 @@ class WorkerThreadTest(unittest.TestCase):
     def test_build_not_sent_to_github_if_success(self):
         """ Verifies that nothing is sent to Github of build passes.
         """
+        with patch.object(Build, 'save') as save:
+            save.return_value = True
+            build = Build()
+            build._id = 1
+
+            with patch.object(WorkerThread, '_retrieve_build') as mock1:
+                mock1.return_value = build
+
+                with patch.object(WorkerThread, '_bash_build') as mock2:
+                    mock2.return_value = True
+
+                    with patch.object(WorkerThread, '_post_to_github') as mock3:
+                        mock3.return_value = True
+                        self.thread = WorkerThread(self.queue)
+                        self.queue.add_build(build)
+
+                        self.thread.start()
+                        self.thread.join()
+
+                        self.thread._post_to_github.assert_not_called()
 
     def test_builds_builds_in_correct_order(self):
         """ Verifies that when multiple builds are in the BuildQueue, they
