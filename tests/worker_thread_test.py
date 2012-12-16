@@ -75,9 +75,6 @@ class WorkerThreadTest(unittest.TestCase):
 
         self.assertEqual(self.thread.current_build, build)
 
-    def test_configs_are_accurately_read(self):
-        """ Tests that configs for WorkerThread are read correctly from the
-        configuration file during initialization """
     def test_build_can_be_retrieved_success(self):
         """ Verifies that WorkerThread can retrieve Build from Mongo with ID
 
