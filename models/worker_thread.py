@@ -93,6 +93,8 @@ class WorkerThread(threading.Thread):
             returns a Build object with Build.id == id
         """
         build = Build.find_one(dict(_id=id))
+        if build is None: raise BuildNotFoundException("Build was not in database.")
+        return build
 
     def build(build):
         """ PRIVATE: Builds build
