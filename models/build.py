@@ -91,8 +91,13 @@ class Build(Document):
         
         if json is not None:
             self.from_json(json) # provided by mongokit
-        elif id is not None:
             self.validate()      # provided by mongokit
+        
+        # while we can always just use self.find, this allows some more
+        # consistency in use.
+        elif id is not None:
+            self.find({'_id': id})
+            
         # note that if neither json nor id are provided, it
         # creates an empty Build with no data. This is useful
         # for testing mostly.
