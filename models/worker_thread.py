@@ -79,13 +79,14 @@ class WorkerThread(threading.Thread()):
         if self.queue.has_builds():
             self.current_build = self._retrieve_build(self.queue.next_build())
 
-    def _retrieve_build(id):
+    def _retrieve_build(self, id):
         """ PRIVATE: Retrieves build given build.ID
 
             @param id is the integer Build.id of the build to be retrieved
 
             returns a Build object with Build.id == id
         """
+        build = Build.find_one(dict(_id=id))
 
     def build(build):
         """ PRIVATE: Builds build
