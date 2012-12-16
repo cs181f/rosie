@@ -84,7 +84,10 @@ class WorkerThread(threading.Thread):
         """ PUBLIC: Starts worker in new Thread """
         if self.queue.has_builds():
             self.current_build = self._retrieve_build(self.queue.next_build())
-
+            result = self._build(self.current_build)
+            if result['success']:
+                self.current_build.status = 1
+                self.current_build.save()
     def _retrieve_build(self, id):
         """ PRIVATE: Retrieves build given build.ID
 
