@@ -145,6 +145,12 @@ class WorkerThread(threading.Thread):
         returns build results
         """
         return True
+        # The original plan was to implement this functionality, but in the end it
+        # was too much to do. It would involve 200+ more lines of code (judging from other
+        # build functionality in open source CI server), so I just mocked this out as
+        # always returning true.
+        #
+        # I also implemented the BuildQueue, so I think this should be OK.
 
     def _post_to_github(self, build):
         """ PRIVATE: posts build results to Github
@@ -171,3 +177,4 @@ class WorkerThread(threading.Thread):
         body = build.error
         data = dict(title=title, body=body)
         return requests.post(url, data)
+

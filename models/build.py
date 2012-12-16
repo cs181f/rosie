@@ -23,8 +23,9 @@ connection = Connection()
 # any string to unicode conversions necessary.
 @connection.register    # assigns the schema to the database
 class Build(Document):
-    __collection__ = 'build_coll'   # database structure
-    __database__ = 'build_db'       # database structure
+    __collection__ = 'builds'   # database structure
+    __database__ = 'rosie'       # database structure
+
     use_dot_notation = True
     dot_notation_warning = True
     structure = {
@@ -36,17 +37,19 @@ class Build(Document):
                 'name': unicode,
                 'email': unicode
             }
-        }, # description from github
+        },                      # description from github
         'url': unicode,         # url to specific commit
         'author': {             # author of commit
             'email': unicode,   # author's email
-            'name': unicode },  # author's name
+            'name': unicode
+        },  # author's name
         'message': unicode,     # the commit message describing changes made
         'timestamp': unicode,   # time committed
         'ref': unicode,         # branch information
         'status': IS(0,1,2),    # status of the build attempt. must be one of these numbers.
         'error': unicode        # information about any build errors
     }
+
     # these fields will be enforced by mongokit.
     # When self.validate() is called, mongokit checks that these
     #    fields exist and contain legal data.
@@ -80,19 +83,21 @@ class Build(Document):
     """
 
     # __init__
-    def __init__(self, json=None, id=None):
+    def __init__(self, *args, **kwargs):
         """ takes in a json string or an id number
             Creates a new Build
             and either fills it with json and saves it away
             or grabs the indicated Build from the database
         """
+        json = kwargs.get('json', None)
+        id = kwargs.get('id', None)
 
         # if both optional fields are provided, raise an error
         if json is not None and id is not None:
             raise BuildErrorException("Cannot use both json and id args.")
 
         # initializer for the parent Document class
-        Document.__init__(self)
+        Document.__init__(self, *args, **kwargs)
 
         if json is not None:
             self.from_json(json) # provided by mongokit
@@ -149,4 +154,3 @@ class Build(Document):
         provided by MongoKit
         returns a cursor that will iterate through all of the builds
     """
-
