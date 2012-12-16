@@ -101,6 +101,8 @@ class WorkerThread(threading.Thread):
         result = self._bash_build(build)
         if type(result) == str:
             return dict(success=False, error=result)
+        else:
+            return dict(success=True)
 
     def _bash_build(self, build):
         """ PRIVATE: Builds build in bash
