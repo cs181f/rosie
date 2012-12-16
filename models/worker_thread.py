@@ -144,17 +144,7 @@ class WorkerThread(threading.Thread):
         """
         return True
 
-    def save_build_results(results):
-        """ PRIVATE: stores build results in MongoDB
-
-        This method will be easily enabled by the Build object.
-
-        @param results is the results information returned by the build method
-
-        returns True if information is correctly saved, False otherwise
-        """
-
-    def post_to_github(results):
+    def _post_to_github(results):
         """ PRIVATE: posts build results to Github
 
         This method will primarily be using the request module to communicate
