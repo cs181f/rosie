@@ -93,11 +93,15 @@ class Build(Document):
             self.from_json(json) # provided by mongokit
             self.validate()      # provided by mongokit
         
-        # while we can always just use self.find, this allows some more
-        # consistency in use.
+        # while we can always just use self.find, this cleans it up
         elif id is not None:
-            self.find({'_id': id})
-            
+            matches = self.find({'_id': id})
+            if matches.count() == 1:
+                self = matches[0]
+            elif matches.count() == 0:
+                raise BuildErrorException("Found no matching documents.")
+            else:
+                raise BuildErrorException("Found multiple matching documents.")
         # note that if neither json nor id are provided, it
         # creates an empty Build with no data. This is useful
         # for testing mostly.
