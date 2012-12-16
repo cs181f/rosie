@@ -88,6 +88,10 @@ class WorkerThread(threading.Thread):
             if result['success']:
                 self.current_build.status = 1
                 self.current_build.save()
+            else:
+                self.current_build.status = 2
+                self.current_build.error = result['error']
+                self.current_build.save()
     def _retrieve_build(self, id):
         """ PRIVATE: Retrieves build given build.ID
 
