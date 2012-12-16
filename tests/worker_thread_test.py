@@ -127,6 +127,15 @@ class WorkerThreadTest(unittest.TestCase):
         """ Verifies that WorkerThread.build returns a valid success result if
             the build succeeded
         """
+        with patch.object(WorkerThread, '_bash_build') as mock_method:
+            build = Build()
+            self.thread = WorkerThread(self.queue)
+
+            mock_method.return_value = True
+
+            result = self.thread._build(build)
+            self.assertEqual(result, dict(success=True))
+
     def test_build_can_be_saved_if_success(self):
         """ Verifies that correct Build is updated in MongoDB on successful build.
 
