@@ -56,6 +56,12 @@ This module only uses:
 import requests
 from build import Build
 
+class BuildNotFoundException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 # WorkerThread inherits from the Python stdlib threading.Thread class.
 class WorkerThread(threading.Thread):
     """PUBLIC: Constructor for WorkerThread class
