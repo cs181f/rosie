@@ -51,11 +51,11 @@ class BuildTest(unittest.TestCase):
                 'name': 'dunvi' },
             'message': 'updating with changes from design review',
             'timestamp': '2012-12-15T20:05:07-08:00',
-            'ref': "refs/heads/master"
+            'ref': "refs/heads/master",
             'status': 2,
             'error': ''
         }
-        self.json = json.dump(self.fake_json)
+        self.json = json.dumps(self.fake_json)
 
     def tearDown(self):
         """ Nothing needs to be torn down """

@@ -5,6 +5,7 @@ http://namlook.github.com/mongokit/index.html
 """
 
 from mongokit import Document, Connection, IS
+import datetime
 
 class BuildErrorException(Exception):
     def __init__(self, value):
@@ -27,7 +28,9 @@ class Build(Document):
     __database__ = 'rosie'       # database structure
 
     use_dot_notation = True
-    dot_notation_warning = True
+
+    skip_validation = True
+
     structure = {
         'repository': {
             'url': unicode,     # url to the github repository
@@ -47,9 +50,14 @@ class Build(Document):
         'timestamp': unicode,   # time committed
         'ref': unicode,         # branch information
         'status': IS(0,1,2),    # 0 = processing, 1 = successful, 2 = failed
-        'error': unicode        # information about any build errors (optional)
+        'error': unicode,        # information about any build errors (optional)
+        'build_time': datetime.datetime
     }
 
+    default_values = {
+        'status': 0,
+        'error': ''
+    }
     # these fields will be enforced by mongokit.
     # When self.validate() is called, mongokit checks that these
     #    fields exist and contain legal data.
@@ -63,7 +71,7 @@ class Build(Document):
         'message',
         'timestamp',
         'ref',
-        'status',
+        'status'
     ]
 
 
@@ -84,7 +92,9 @@ class Build(Document):
     # uses initializer inherited from Document class
 
     def new_from_json(self, json):
-        return self.from_json(json) # provided by mongokit
+        build = self.from_json(json) # provided by mongokit
+        build.status = 0
+        return build
 
     # load
     def load_from_database(self, id):
@@ -100,20 +110,17 @@ class Build(Document):
 	    raise BuildErrorException("Found multiple matching documents.")
 
     # save
-    def save(self, *args, **kwargs):
-        """ Stores an object in the database.
-            Returns the ID to store in the build queue
+    # def save(self, *args, **kwargs):
+    #     """ Stores an object in the database.
+    #         Returns the ID to store in the build queue
 
-            While MongoKit contains a save() method, we are
-            bypassing it in favor of the PyMongo version in order
-            to obtain the internal ID number, which we will use
-            in the build queue.
-        """
-        # calls self.validate()
-        self.validate()
-
-        # this is the PyMongo save method:
-        return self.collection.save(self, *args, **kwargs)
+    #         While MongoKit contains a save() method, we are
+    #         bypassing it in favor of the PyMongo version in order
+    #         to obtain the internal ID number, which we will use
+    #         in the build queue.
+    #     """
+    #     # this is the PyMongo save method:
+    #     return self.collection.save(self, *args, **kwargs)
 
     # update_with_results
     def update_with_results(self, newstatus, errmsg=None):
