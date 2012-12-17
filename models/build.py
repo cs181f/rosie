@@ -90,7 +90,7 @@ class Build(Document):
     # load
     def load_from_database(self, id):
 	""" takes in an id and fills the build document with it """
-	if id not isinstance ObjectId: 
+	if not isinstance(id, ObjectId): 
 	    raise BuildErrorException("Not a valid ID")
         matches = self.find({'_id': id})
 	if matches.count() == 1:
