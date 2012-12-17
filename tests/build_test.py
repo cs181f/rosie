@@ -25,6 +25,7 @@ import json
 from mongokit import Connection
 from rosie.models import (
     Build,
+    BuildErrorException,
     connection
 )
 
@@ -59,7 +60,7 @@ class BuildTest(unittest.TestCase):
             'ref': "refs/heads/master",
             'status': 0
         }
-        self.json = json.dump(self.fake_json)
+        self.json = json.dumps(self.fake_json)
 
     def tearDown(self):
         """ Nothing needs to be torn down """
@@ -75,7 +76,7 @@ class BuildTest(unittest.TestCase):
         # this is a fake build
         # it doesn't actually point to anything useful :P
         json_build = self.connection.Build()
-	json_build.create_new_build(self.json)
+	json_build.new_from_json(self.json)
 	# this calls validate. if validate fails, the test will
 	# fail, there are no asserts needed.
 
@@ -84,9 +85,9 @@ class BuildTest(unittest.TestCase):
         """ Tests that bad JSON results in a reasonable response
             checks for: reasonable errors """
         json_build = self.connection.Build()
+	json_build.new_from_json(json.dumps({'fake':'haha'}))
         with self.assertRaises(SchemaTypeError):
-		json_build.create_new_build({'fake':'haha'})
-        # note that validate, embedded in create_new_build,
+	    json_build.validate()
         # will raise exceptions if this is wrong
         # otherwise validate does nothing
 
@@ -95,7 +96,7 @@ class BuildTest(unittest.TestCase):
         """ Tests that a build is successfully inserted 
 	    and returns an ID correctly """
         test_build = self.connection.Build()
-	test_build.create_new_build(self.json)
+	test_build.new_from_json(self.json)
         test_id = test_build.save()
         self.assertEqual(self.db.count(), 1)
 	self.assertIsInstance(ObjectId, test_id)
@@ -113,7 +114,7 @@ class BuildTest(unittest.TestCase):
 
         # put in a test object
 	insert_build = self.connection.Build()
-	insert_build.create_new_build(self.json)
+	insert_build.new_from_json(self.json)
 	inserted_id = insert_build.save()
 	
 	# check for incorrect ID type
@@ -132,7 +133,7 @@ class BuildTest(unittest.TestCase):
             checks for:
                 correct Document retrieved
                 valid JSON returned """
-        test_build = self.connection.Build(json=self.json)
+        test_build = self.connection.Build().new_from_json(self.json)
         saved_id = test_build.save()
         self.fake_json['_id'] = saved_id
 
@@ -142,21 +143,18 @@ class BuildTest(unittest.TestCase):
         # check that they got the same thing
         self.assertEqual(get_by_find, get_by_init)
 	# since we know they both match, we only have to check one of these
-        self.assertEqual(get_by_find, json.dump(self.fake_json))
+        self.assertEqual(get_by_find, json.dumps(self.fake_json))
 
     def test_multiple_build_retrieval(self):
         """ Tests that retrieving multiple builds works correctly """
         # should not be smart enough to tell that matching json is the same build,
         # so we can populate the database with multiple copies of the same build :P
-        test_build1_id = self.connection.Build(json=self.json).save()
-        test_build2_id = self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
-        self.connection.Build(json=self.json).save()
+        test_build1_id = self.connection.Build().new_from_json(self.json).save()
+        test_build2_id = self.connection.Build().new_from_json(self.json).save()
+        self.connection.Build().new_from_json(self.json).save()
+        self.connection.Build().new_from_json(self.json).save()
+        self.connection.Build().new_from_json(self.json).save()
+        self.connection.Build().new_from_json(self.json).save()
 
         # test that we get the right ones
         get_build1 = self.Build(id=test_build1_id)
@@ -171,7 +169,7 @@ class BuildTest(unittest.TestCase):
                 correct retrieval of guild
                 correct update """
         test_build = self.connection.Build()
-	test_build.create_new_build(self.json)
+	test_build.new_from_json(self.json)
         test_build_id = test_build.save()
 
         error_msg = "this is an error message"
