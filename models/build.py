@@ -4,7 +4,7 @@ Essentially a nice wrapper to make things as easy as possible
 http://namlook.github.com/mongokit/index.html
 """
 
-from mongokit import Document, Connection, IS
+from mongokit import Document, Connection, IS, ObjectId
 import datetime
 
 class BuildErrorException(Exception):
