@@ -4,7 +4,7 @@ Essentially a nice wrapper to make things as easy as possible
 http://namlook.github.com/mongokit/index.html
 """
 
-from mongokit import Document, Connection, IS
+from mongokit import Document, Connection, IS, ObjectId
 
 class BuildErrorException(Exception):
     def __init__(self, value):
@@ -26,8 +26,6 @@ class Build(Document):
     __collection__ = 'builds'   # database structure
     __database__ = 'rosie'       # database structure
 
-    use_dot_notation = True
-    dot_notation_warning = True
     structure = {
         'repository': {
             'url': unicode,     # url to the github repository

@@ -23,6 +23,7 @@ following tests:
 import unittest
 import json
 from mongokit import Connection
+from bson.objectid import ObjectId
 from rosie.models import (
     Build,
     BuildErrorException,
