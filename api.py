@@ -26,7 +26,7 @@ from datetime import datetime
 from mongokit import ObjectId
 
 api = Flask(__name__)
-api.config.from_object('rosie.config')
+api.config.from_object('config')
 
 api.worker = None
 api.queue = BuildQueue()
@@ -69,7 +69,7 @@ def build():
 @api.route('/ping', methods=['GET'])
 def ping():
     #checks whether the worker is processing a build or free
-    if not api.worker.is_building():
+    if api.worker is None or not api.worker.is_building():
         return jsonify(dict(building=False))
     else:
         return jsonify(dict(building=True, build=api.worker.current_build))
