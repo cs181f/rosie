@@ -83,9 +83,8 @@ class Build(Document):
 
     # uses initializer inherited from Document class
 
-    def create_new_build(self, json):
-        self.from_json(json) # provided by mongokit
-	self.validate()      # provided by mongokit
+    def new_from_json(self, json):
+        return self.from_json(json) # provided by mongokit
 
     # load
     def load_from_database(self, id):
