@@ -30,6 +30,10 @@ from rosie.models import (
     connection
 )
 
+from mongokit import SchemaTypeError, StructureError
+from datetime import datetime
+
+Build = connection.Build
 
 class BuildTest(unittest.TestCase):
     """Test cases for Worker Thread"""
@@ -41,8 +45,7 @@ class BuildTest(unittest.TestCase):
 
     def setUp(self):
         """ need to set this up? """
-        self.connection = connection
-        self.fake_json = {
+        self.json = {
             'repository': {
                 'url': 'https://github.com/cs181f/rosie',
                 'name': 'rosie',
@@ -60,34 +63,36 @@ class BuildTest(unittest.TestCase):
             'timestamp': '2012-12-15T20:05:07-08:00',
             'ref': "refs/heads/master"
         }
-        self.json = json.dumps(self.fake_json)
 
     def tearDown(self):
-        """ Nothing needs to be torn down """
+        """ Empty DB """
+
+        connection.Build.collection.remove()
 
     def test_empty_build_creation(self):
-        """ Tests that a new build is created correctly """
+        """ Tests that a new build is created correctly with correct defaults """
         empty_build = Build()
-	# is this one even needed anymore?
+
+        self.assertEqual(empty_build.status, 0)
+        self.assertEqual(empty_build.error, '')\
 
     def test_build_from_good_json(self):
         """ Tests that sample JSON results in a valid Build object that is
             correctly inserted into the database """
         # this is a fake build
         # it doesn't actually point to anything useful :P
-        json_build = self.connection.Build()
-	json_build.new_from_json(self.json)
-	# this calls validate. if validate fails, the test will
-	# fail, there are no asserts needed.
+        json_build = Build.new_from_json(self.json)
+
+        self.assertEqual(json_build.status, 0)
+        self.assertEqual(json_build.url, self.json['url'])
 
     # does not test save()
     def test_build_from_bad_json(self):
         """ Tests that bad JSON results in a reasonable response
             checks for: reasonable errors """
-        json_build = self.connection.Build()
-	json_build.new_from_json(json.dumps({'fake':'haha'}))
-        with self.assertRaises(SchemaTypeError):
-	    json_build.validate()
+        json_build = Build.new_from_json({'fake':'haha'})
+        with self.assertRaises(StructureError):
+	       json_build.validate()
         # will raise exceptions if this is wrong
         # otherwise validate does nothing
 
@@ -95,93 +100,95 @@ class BuildTest(unittest.TestCase):
     def test_build_insertion(self):
         """ Tests that a build is successfully inserted
 	    and returns an ID correctly """
-        test_build = self.connection.Build()
-	test_build.new_from_json(self.json)
-        test_id = test_build.save()
-        self.assertEqual(self.db.count(), 1)
-	self.assertIsInstance(ObjectId, test_id)
+        test_build = Build.new_from_json(self.json)
+        test_build.save()
+
+        count = 0
+        for b in Build.find():
+            count += 1
+
+        self.assertEqual(count, 1)
+        self.assertIsInstance(test_build._id, ObjectId)
 
     def test_failed_build_retrieval(self):
         """ Tests that bad retrieves fail reasonably
             checks for:
                 reasonable error given invalid ID
                 reasonable errors for database errors """
-	with self.assertRaises(BuildErrorException):
-	    test_build  = self.connection.Build()
-	    test_build.load_from_database(id=ObjectId())
-	    # should raise an error because it does
-	    # not exist (database is empty)
+
+    	with self.assertRaises(BuildErrorException):
+    	    test_build  = Build()
+    	    test_build.load_from_database(id=ObjectId())
+    	    # should raise an error because it does
+    	    # not exist (database is empty)
 
         # put in a test object
-	insert_build = self.connection.Build()
-	insert_build.new_from_json(self.json)
-	inserted_id = insert_build.save()
+    	insert_build = Build.new_from_json(self.json)
+    	inserted_id = insert_build.save()
 
-	# check for incorrect ID type
-	with self.assertRaises(BuildErrorException):
-	    test_build = self.connection.Build()
-	    test_build.load_from_database(id=3)
+    	# check for incorrect ID type
+    	with self.assertRaises(BuildErrorException):
+    	    test_build = Build()
+    	    test_build.load_from_database(id=3)
 
-        # check for grabbing non-existant thing
-        self.connection.Build(json=self.json).save()
-        with self.assertRaises(BuildErrorException):
-            test_build = self.connection.Build(id=ObjectId())
+ #    def test_build_retrieval(self):
+ #        """ Tests that Build objects are correctly retrieved from the
+ #            database given an ID (as would be used by the BuildQueue)
+ #            checks for:
+ #                correct Document retrieved
+ #                valid JSON returned """
 
-    def test_build_retrieval(self):
-        """ Tests that Build objects are correctly retrieved from the
-            database given an ID (as would be used by the BuildQueue)
-            checks for:
-                correct Document retrieved
-                valid JSON returned """
-        test_build = self.connection.Build().new_from_json(self.json)
-        saved_id = test_build.save()
-        self.fake_json['_id'] = saved_id
+ #        test_build = Build.new_from_json(self.json)
+ #        test_build.save()
+ #        self.fake_json['_id'] = saved_id
 
-        get_by_find = self.Build().find({'_id': saved_id})
-        get_by_init = self.Build(id=saved_id)
+ #        get_by_find = self.Build().find({'_id': saved_id})
+ #        get_by_init = self.Build(id=saved_id)
 
-        # check that they got the same thing
-        self.assertEqual(get_by_find, get_by_init)
-	# since we know they both match, we only have to check one of these
-        self.assertEqual(get_by_find, json.dumps(self.fake_json))
+ #        # check that they got the same thing
+ #        self.assertEqual(get_by_find, get_by_init)
+	# # since we know they both match, we only have to check one of these
+ #        self.assertEqual(get_by_find, json.dumps(self.fake_json))
 
-    def test_multiple_build_retrieval(self):
-        """ Tests that retrieving multiple builds works correctly """
-        # should not be smart enough to tell that matching json is the same build,
-        # so we can populate the database with multiple copies of the same build :P
-        test_build1_id = self.connection.Build().new_from_json(self.json).save()
-        test_build2_id = self.connection.Build().new_from_json(self.json).save()
-        self.connection.Build().new_from_json(self.json).save()
-        self.connection.Build().new_from_json(self.json).save()
-        self.connection.Build().new_from_json(self.json).save()
-        self.connection.Build().new_from_json(self.json).save()
+ #    def test_multiple_build_retrieval(self):
+ #        """ Tests that retrieving multiple builds works correctly """
+ #        # should not be smart enough to tell that matching json is the same build,
+ #        # so we can populate the database with multiple copies of the same build :P
+ #        pass
+ #        test_build1_id = self.connection.Build().new_from_json(self.json).save()
+ #        test_build2_id = self.connection.Build().new_from_json(self.json).save()
+ #        self.connection.Build().new_from_json(self.json).save()
+ #        self.connection.Build().new_from_json(self.json).save()
+ #        self.connection.Build().new_from_json(self.json).save()
+ #        self.connection.Build().new_from_json(self.json).save()
 
-        # test that we get the right ones
-        get_build1 = self.Build(id=test_build1_id)
-        get_build2 = self.Build(id=test_build2_id)
-        self.assertNotEqual(get_build1['_id'], get_build2['_id'])
-        self.assertEqual(get_build1['_id'], test_build1_id)
-        self.assertEqual(get_build2['_id'], test_build2_id)
+ #        # test that we get the right ones
+ #        get_build1 = self.Build(id=test_build1_id)
+ #        get_build2 = self.Build(id=test_build2_id)
+ #        self.assertNotEqual(get_build1['_id'], get_build2['_id'])
+ #        self.assertEqual(get_build1['_id'], test_build1_id)
+ #        self.assertEqual(get_build2['_id'], test_build2_id)
 
-    def test_update_existing_build(self):
-        """ Tests that updating a build with build results works correctly
-            checks for:
-                correct retrieval of guild
-                correct update """
-        test_build = self.connection.Build()
-	test_build.new_from_json(self.json)
-        test_build_id = test_build.save()
+ #    def test_update_existing_build(self):
+ #        """ Tests that updating a build with build results works correctly
+ #            checks for:
+ #                correct retrieval of guild
+ #                correct update """
+ #        pass
+ #        test_build = self.connection.Build()
+ #        test_build.new_from_json(self.json)
+ #        test_build_id = test_build.save()
 
-        error_msg = "this is an error message"
+ #        error_msg = "this is an error message"
 
-        test_build.update_with_results(1)
-        check = self.connection.Build()
-	check.load_from_database(test_build_id)
-	assertEqual(check['status'],1)
+ #        test_build.update_with_results(1)
+ #        check = self.connection.Build()
+ #        check.load_from_database(test_build_id)
+ #        assertEqual(check['status'],1)
 
-	test_build.update_with_results(2, errmsg=error_msg)
-	check = self.connection.Build()
-	check.load_from_database(test_build_id)
-	assertEqual(check['status'],2)
-        assertEqual(check['error'],error_msg)
+	# test_build.update_with_results(2, errmsg=error_msg)
+	# check = self.connection.Build()
+	# check.load_from_database(test_build_id)
+	# assertEqual(check['status'],2)
+ #        assertEqual(check['error'],error_msg)
 

@@ -92,22 +92,26 @@ class Build(Document):
     # uses initializer inherited from Document class
 
     def new_from_json(self, json):
-        build = self.from_json(json) # provided by mongokit
-        build.status = 0
+        build = self(json) # provided by mongokit
+        build['status'] = 0
+        build['error'] = ''
+        build['build_time'] = datetime.datetime.utcnow()
         return build
 
     # load
     def load_from_database(self, id):
-	""" takes in an id and fills the build document with it """
-	if not isinstance(id, ObjectId):
-	    raise BuildErrorException("Not a valid ID")
-        matches = self.find({'_id': id})
-	if matches.count() == 1:
-	    self = matches[0]
-	elif matches.count() == 0:
-	    raise BuildErrorException("Found no matching documents.")
+    	""" takes in an id and fills the build document with it """
+    	if not isinstance(id, ObjectId):
+    	    raise BuildErrorException("Not a valid ID")
+
+        matches = connection.Build.find({'_id': id})
+
+    	if matches.count() == 1:
+    	    self = matches[0]
+    	elif matches.count() == 0:
+    	    raise BuildErrorException("Found no matching documents.")
         else:
-	    raise BuildErrorException("Found multiple matching documents.")
+    	    raise BuildErrorException("Found multiple matching documents.")
 
     # save
     # def save(self, *args, **kwargs):
@@ -124,10 +128,10 @@ class Build(Document):
 
     # update_with_results
     def update_with_results(self, newstatus, errmsg=None):
-	self['status'] = newstatus
-	if newstatus == 2: # if the build failed
-	    self['error'] = errmsg
-	self.save()        # handles validation
+    	self['status'] = newstatus
+    	if newstatus == 2: # if the build failed
+    	    self['error'] = errmsg
+    	self.save()        # handles validation
 
     # The following methods are documented here:
     #    http://namlook.github.com/mongokit/query.html
