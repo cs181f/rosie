@@ -1,0 +1,275 @@
+commit b25d1d6f7ebfa125c25ec7f5a0009785c361296e
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 19:14:52 2012 -0800
+
+    adds TDD Report
+
+commit f65d5ef1b3ef24cff147a2a53aecbd7d5b9f34e6
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:53:58 2012 -0800
+
+    nothing commit
+
+commit 364e75629892934871461ef1c813b4cd5da090c2
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:49:42 2012 -0800
+
+    all tests passing, YEAHHHHH
+
+commit a06e6f4b9aea9cf0be8ff85796121fcf28579b31
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:43:17 2012 -0800
+
+    adds test to make sure that teh builds are built in the correct order, not passing right now
+
+commit cb7796d7d647b76cc6aa29dc11ac17158dad224f
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:42:43 2012 -0800
+
+    add test (and don't even need to change the code) for making sure github does not get updated on success
+
+commit 23acc037ac7d94ee1887e3586a76765d832beb21
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:32:11 2012 -0800
+
+    removes unnecessary function
+
+commit 1e9f96163f3584878f19780d85e2381c34043aa2
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:31:56 2012 -0800
+
+    now have it passing with post to github on fail
+
+commit 780b63a76fb1e4683531aaa36c504721e3895c6f
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:26:30 2012 -0800
+
+    even more copy and pasting from the previous tests, have test failing for updating github on a fail
+
+commit d607727ee29804a1e6fc0d16e21881e042ea9962
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:20:44 2012 -0800
+
+    adds code to save a failed build and haveit passing now
+
+commit cd80bc59087543a1a84f2311400eda0895d8eb27
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:10:13 2012 -0800
+
+    lots of copy and pasting from success test, test is now failing for saving a failed build
+
+commit d1748c192995108c27b9fb2a05de76b45233b2c1
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 18:04:37 2012 -0800
+
+    that was super easy, all tests passing agani, woot
+
+commit 9d414afa1cfe98585cabf766bfb58805a7364bd5
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:58:54 2012 -0800
+
+    adds test code for saving a build on success
+
+commit d9495ab6d708a6a6071ed4d84557b624b20ef1ff
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:45:47 2012 -0800
+
+    having passing build passing, woooo
+
+commit f1da74f8c21904a10c4c3d8138c306a17f2ef6f6
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:38:24 2012 -0800
+
+    writes test for passing build and have it failing
+
+commit e3a7667065340f7df94c79fdbe7328f26d5d2754
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:31:50 2012 -0800
+
+    adds _bash_build and gets test passing for failing build
+
+commit c9b5f64ad363adbbf298d3c00aef3135d32a29cb
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:23:10 2012 -0800
+
+    Here, I decide to split out _build and _bash_build, so I can test that _build returns the correct responses without implementing _bash_build. This is not yet reflected in teh code. Has test for build error failing.
+
+commit 18dcabe9af1b05de313cf69efe1ddef10ce3b050
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:18:30 2012 -0800
+
+    passes test, woot
+
+commit 770311941853c01b0d39793855f37b5a8deb4259
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:15:23 2012 -0800
+
+    implements worker thread
+
+commit 10a64267feae95063b2904ae6494d835381c0433
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 17:05:58 2012 -0800
+
+    adds build not found exception
+
+commit 48f24ec96972ceacf407d870d3223e0b85beafd4
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:59:47 2012 -0800
+
+    has it failing on bad retrieve of build
+
+commit 4d3acde319c93c90d01a214158bba59b057b45dc
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:45:31 2012 -0800
+
+    fixes small typo in build queue
+
+commit 0e6c3d31089866bd8c18ab23e872716874700b5b
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:44:15 2012 -0800
+
+    fixes small typo in worker thread
+
+commit 78cf494889a502a5ad9afe0259acec55fe7e1e84
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:27:59 2012 -0800
+
+    updates _retrieve_build method to retrieve build when it exists
+
+commit 95fa9778c2b85fd057c7993aa9d733f0e8406435
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:21:21 2012 -0800
+
+    adds test for retrieving build, mocks Build.find_one object
+
+commit 87f072ad7483fa4b4623f51855bd0e177a76055b
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:10:53 2012 -0800
+
+    removes config reading test because it is no longer necessary
+
+commit cdbfad12a2cdb469ded67d028e4293106b691d8f
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 16:05:37 2012 -0800
+
+    writes code to pass reading of first id test
+
+commit 6753e822cf29e9a125c1b6d1affc772176a4e077
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:55:27 2012 -0800
+
+    fixes worker thread test for reading first id
+
+commit ae9e96898b7d4b516f8a23ebd0c33c92062439b3
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:42:54 2012 -0800
+
+    adds tests for reading first id if queue is not empty
+
+commit e365f701a5e8485cbfcc2024c3a7a0ba90816963
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:30:53 2012 -0800
+
+    gets source code working for first two tests
+
+commit e284e3865f166701c55cebe379832e4829097236
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:20:37 2012 -0800
+
+    adds tests for saving queue and worker thread exiting if empty
+
+commit a3e129fd9f9496dac63e011df0117e968f640931
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:15:13 2012 -0800
+
+    deletes unnecessary test
+
+commit 89a73aef32c0d2e5cca6c7caad197ea17b63b059
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:13:46 2012 -0800
+
+    adds dependencies for worker thread tests
+
+commit 0209b0e2ad6c27fba9224dcecf16d344fd8b14f7
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 15:07:41 2012 -0800
+
+    cleans things up in the tests for build_queue
+
+commit a75e2831c6bd754bd36dd9aa3b40bbf3b330f1f2
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 14:57:53 2012 -0800
+
+    fixes thread test
+
+commit e666e66806648d210eda6b43a0aefc3adb7a740d
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 14:54:38 2012 -0800
+
+    finishes thread test
+
+commit c7ddaeab28bfd6f8ff0b8087dbb0b5fe53885bd1
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 14:44:15 2012 -0800
+
+    starts thread test
+
+commit df82cb7514b65c185c2372c44cc3c7d8b9589114
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 14:31:56 2012 -0800
+
+    implements add_build
+
+commit 6a95abe7fe409147cbc58272c731023e3129a58a
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 14:13:37 2012 -0800
+
+    adds add_build test
+
+commit 3520d919ee9fe8f952a7c580d16c56b7fac32a5e
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 13:48:20 2012 -0800
+
+    implements next build
+
+commit 807f40e4f06b0bc29ef8b0953230f07224bbb2d5
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 13:28:01 2012 -0800
+
+    adds next build tests
+
+commit f36592d494ba98cc81da927845dc385477b9312c
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 12:56:08 2012 -0800
+
+    implements has builds and adds better build queue print function
+
+commit ab76d73985c5aaec70f8ebd2371da996d44f8258
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 12:25:22 2012 -0800
+
+    adds has builds tests
+
+commit b3e0108566789e7e73cec1ff467046c27d9d08c1
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 11:53:15 2012 -0800
+
+    This commit adds a requirements.txt file. To use it, install virtualenv, create a new env and then run pip install -r requirements.txt. This will install all of the dependencies for this project
+
+commit e0cad988bd879d522aa7e6f98eed5b8586815a00
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 11:52:52 2012 -0800
+
+    adds gitignore
+
+commit 23f8f0e9f475a073847b55215aae93858da46bfc
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 11:51:47 2012 -0800
+
+    small changes to build so it will compile
+
+commit 1f9a6518b6a2fd57efb136883c0485264e3f88aa
+Author: Jesse Pollak <jpollak92@gmail.com>
+Date:   Sat Dec 15 11:51:08 2012 -0800
+
+    initial commit
