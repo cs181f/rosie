@@ -170,26 +170,24 @@ class BuildTest(unittest.TestCase):
          self.assertEqual(get_build1['_id'], test_build1_id)
          self.assertEqual(get_build2['_id'], test_build2_id)
 
- #    def test_update_existing_build(self):
- #        """ Tests that updating a build with build results works correctly
- #            checks for:
- #                correct retrieval of guild
- #                correct update """
- #        pass
- #        test_build = self.connection.Build()
- #        test_build.new_from_json(self.json)
- #        test_build_id = test_build.save()
+    def test_update_existing_build(self):
+         """ Tests that updating a build with build results works correctly
+             checks for:
+                 correct retrieval of guild
+                 correct update """
+         pass
+         test_build = Build.new_from_json(self.json)
+	 test_build.save()
+         test_build_id = test_build['_id']
 
- #        error_msg = "this is an error message"
+         error_msg = "this is an error message"
 
- #        test_build.update_with_results(1)
- #        check = self.connection.Build()
- #        check.load_from_database(test_build_id)
- #        assertEqual(check['status'],1)
+         test_build.update_with_results(1)
+         check = Build.load_from_database(test_build_id)
+         self.assertEqual(check['status'],1)
 
-	# test_build.update_with_results(2, errmsg=error_msg)
-	# check = self.connection.Build()
-	# check.load_from_database(test_build_id)
-	# assertEqual(check['status'],2)
- #        assertEqual(check['error'],error_msg)
+	 test_build.update_with_results(2, errmsg=error_msg)
+	 check = Build.load_from_database(test_build_id)
+	 self.assertEqual(check['status'],2)
+         self.assertEqual(check['error'],error_msg)
 
