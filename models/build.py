@@ -46,7 +46,7 @@ class Build(Document):
         'message': unicode,     # the commit message describing changes made
         'timestamp': unicode,   # time committed
         'ref': unicode,         # branch information
-        'status': IS(0,1,2),    # 0 = processing, 1 = successful, 2 = failed 
+        'status': IS(0,1,2),    # 0 = processing, 1 = successful, 2 = failed
         'error': unicode        # information about any build errors (optional)
     }
 
@@ -90,7 +90,7 @@ class Build(Document):
     # load
     def load_from_database(self, id):
 	""" takes in an id and fills the build document with it """
-	if id not isinstance ObjectId: 
+	if not isinstance(id, ObjectId):
 	    raise BuildErrorException("Not a valid ID")
         matches = self.find({'_id': id})
 	if matches.count() == 1:
