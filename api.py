@@ -26,10 +26,17 @@ from datetime import datetime
 from mongokit import ObjectId
 
 api = Flask(__name__)
-api.config.from_object('config')
+
 
 api.worker = None
 api.queue = BuildQueue()
+
+if __name__ == '__main__':
+    api.config.from_object('config')
+    api.run()
+else:
+    api.config.from_object('rosie.config')
+
 
 Build = connection.Build
 ###GitHub Webhook###
@@ -142,6 +149,3 @@ def rebuild():
         api.worker.start()
 
     return jsonify(success=True, id=id)
-
-if __name__ == '__main__':
-    api.run()
