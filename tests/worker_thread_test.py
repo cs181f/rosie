@@ -65,7 +65,7 @@ class WorkerThreadTest(unittest.TestCase):
         if it is not empty """
 
         build = Build()
-        build._id = 1
+        build['_id'] = 1
 
         with patch.object(WorkerThread, '_retrieve_build') as mock1:
             mock1.return_value = build
@@ -75,7 +75,7 @@ class WorkerThreadTest(unittest.TestCase):
             self.thread.start()
             self.thread.join()
 
-        self.assertEqual(self.thread.current_build, build)
+        self.assertEqual(self.thread.current_build, None)
 
     def test_build_can_be_retrieved_success(self):
         """ Verifies that WorkerThread can retrieve Build from Mongo with ID
@@ -86,7 +86,7 @@ class WorkerThreadTest(unittest.TestCase):
 
         with patch.object(Build, 'find_one') as mock_method:
             build = Build()
-            build._id = 1
+            build['_id'] = 1
             mock_method.return_value = build
 
             self.queue.add_build(build)
@@ -147,7 +147,7 @@ class WorkerThreadTest(unittest.TestCase):
         with patch.object(Build, 'save') as save:
             save.return_value = True
             build = Build()
-            build._id = 1
+            build['_id'] = 1
 
             with patch.object(WorkerThread, '_retrieve_build') as mock1:
                 mock1.return_value = build
@@ -172,7 +172,7 @@ class WorkerThreadTest(unittest.TestCase):
         with patch.object(Build, 'save') as save:
             save.return_value = True
             build = Build()
-            build._id = 1
+            build['_id'] = 1
 
             with patch.object(WorkerThread, '_retrieve_build') as mock1:
                 mock1.return_value = build
@@ -196,7 +196,7 @@ class WorkerThreadTest(unittest.TestCase):
         with patch.object(Build, 'save') as save:
             save.return_value = True
             build = Build()
-            build._id = 1
+            build['_id'] = 1
 
             with patch.object(WorkerThread, '_retrieve_build') as mock1:
                 mock1.return_value = build
@@ -220,7 +220,7 @@ class WorkerThreadTest(unittest.TestCase):
         with patch.object(Build, 'save') as save:
             save.return_value = True
             build = Build()
-            build._id = 1
+            build['_id'] = 1
 
             with patch.object(WorkerThread, '_retrieve_build') as mock1:
                 mock1.return_value = build
@@ -250,7 +250,7 @@ class WorkerThreadTest(unittest.TestCase):
             builds = []
             for i in range(5):
                 build = Build()
-                build._id = i
+                build['_id'] = i
                 builds.append(build)
 
             with patch.object(WorkerThread, '_retrieve_build') as mock1:

@@ -54,8 +54,9 @@ This module only uses:
     requests.post()
 """
 import requests
-from build import Build
+from build import connection
 from datetime import datetime
+
 
 class BuildNotFoundException(Exception):
     def __init__(self, value):
@@ -70,7 +71,7 @@ class WorkerThread(threading.Thread):
         @param queue is the BuildQueue that contains the Builds to be built
         @param configs is the configuration for the Rosie server
     """
-    def __init__(self, queue, configs=dict()):
+    def __init__(self, queue, configs=dict(), connection=connection):
         # calls standard Thread constructor
         threading.Thread.__init__(self)
 
@@ -80,20 +81,29 @@ class WorkerThread(threading.Thread):
         self.queue = queue
         self.github_link = configs.get('github_link', '')
         self.current_build = None
+        self.connection = connection
+        self.building = False
 
     def run(self):
         """ PUBLIC: Starts worker in new Thread """
+        self.building = True
         while self.queue.has_builds():
             self.current_build = self._retrieve_build(self.queue.next_build())
             result = self._build(self.current_build)
             if result['success']:
-                self.current_build.status = 1
+                self.current_build['status'] = 1
                 self.current_build.save()
             else:
-                self.current_build.status = 2
-                self.current_build.error = result['error']
+                self.current_build['status'] = 2
+                self.current_build['error'] = result['error']
                 self.current_build.save()
                 self._post_to_github(self.current_build)
+
+        self.current_build = None
+        self.building = False
+
+    def is_building(self):
+        return self.building
 
     def _retrieve_build(self, id):
         """ PRIVATE: Retrieves build given build.ID
@@ -102,14 +112,14 @@ class WorkerThread(threading.Thread):
 
             returns a Build object with Build.id == id
         """
-        build = Build.find_one(dict(_id=id))
+        build = self.connection.Build.find_one(dict(_id=id))
         if build is None: raise BuildNotFoundException("Build was not in database.")
         return build
 
     def _build(self, build):
         """ PRIVATE: wrapper for bash build """
         result = self._bash_build(build)
-        build.build_time = datetime.now()
+        build['build_time'] = datetime.now()
         if type(result) == str:
             return dict(success=False, error=result)
         else:
@@ -174,7 +184,7 @@ class WorkerThread(threading.Thread):
         url = base_url + auth_string
 
         title = "Build failure on ref %s" % build.ref
-        body = build.error
+        body = build['error']
         data = dict(title=title, body=body)
         return requests.post(url, data)
 
