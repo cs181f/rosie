@@ -46,8 +46,8 @@ class Build(Document):
         'message': unicode,     # the commit message describing changes made
         'timestamp': unicode,   # time committed
         'ref': unicode,         # branch information
-        'status': IS(0,1,2),    # status of the build attempt. must be one of these numbers.
-        'error': unicode        # information about any build errors
+        'status': IS(0,1,2),    # 0 = processing, 1 = successful, 2 = failed 
+        'error': unicode        # information about any build errors (optional)
     }
 
     # these fields will be enforced by mongokit.
@@ -64,7 +64,6 @@ class Build(Document):
         'timestamp',
         'ref',
         'status',
-        'error',
     ]
 
 
@@ -82,42 +81,27 @@ class Build(Document):
         fills a database object with the provided json object
     """
 
-    # __init__
-    def __init__(self, *args, **kwargs):
-        """ takes in a json string or an id number
-            Creates a new Build
-            and either fills it with json and saves it away
-            or grabs the indicated Build from the database
-        """
-        json = kwargs.get('json', None)
-        id = kwargs.get('id', None)
+    # uses initializer inherited from Document class
 
-        # if both optional fields are provided, raise an error
-        if json is not None and id is not None:
-            raise BuildErrorException("Cannot use both json and id args.")
+    def create_new_build(self, json):
+        self.from_json(json) # provided by mongokit
+	self.validate()      # provided by mongokit
 
-        # initializer for the parent Document class
-        Document.__init__(self, *args, **kwargs)
-
-        if json is not None:
-            self.from_json(json) # provided by mongokit
-            self.validate()      # provided by mongokit
-
-        # while we can always just use self.find, this cleans it up
-        elif id is not None:
-            matches = self.find({'_id': id})
-            if matches.count() == 1:
-                self = matches[0]
-            elif matches.count() == 0:
-                raise BuildErrorException("Found no matching documents.")
-            else:
-                raise BuildErrorException("Found multiple matching documents.")
-        # note that if neither json nor id are provided, it
-        # creates an empty Build with no data. This is useful
-        # for testing mostly.
+    # load
+    def load_from_database(self, id):
+	""" takes in an id and fills the build document with it """
+	if id not isinstance ObjectId: 
+	    raise BuildErrorException("Not a valid ID")
+        matches = self.find({'_id': id})
+	if matches.count() == 1:
+	    self = matches[0]
+	elif matches.count() == 0:
+	    raise BuildErrorException("Found no matching documents.")
+        else:
+	    raise BuildErrorException("Found multiple matching documents.")
 
     # save
-    def save(self):
+    def save(self, *args, **kwargs):
         """ Stores an object in the database.
             Returns the ID to store in the build queue
 
@@ -130,15 +114,14 @@ class Build(Document):
         self.validate()
 
         # this is the PyMongo save method:
-        return self.collection.save(self, safe=safe, *args, **kwargs)
+        return self.collection.save(self, *args, **kwargs)
 
     # update_with_results
-    def update_with_results(self, results):
-        self['error'] = results
-
-        self.save() # self.save() handles validation for me
-
-        # no return value
+    def update_with_results(self, newstatus, errmsg=None):
+	self['status'] = newstatus
+	if newstatus == 2: # if the build failed
+	    self['error'] = errmsg
+	self.save()        # handles validation
 
     # The following methods are documented here:
     #    http://namlook.github.com/mongokit/query.html
