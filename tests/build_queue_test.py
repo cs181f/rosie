@@ -60,7 +60,7 @@ class BuildQueueTest(unittest.TestCase):
         """ Verifies wrapper for Queue.get() is correct """
         build = Build()
         build._id = 2
-        self.queue.add_build(build)
+        self.queue.add_build(build._id)
         self.assertEqual(2, self.queue.next_build())
 
     def test_next_build_raises_exception_if_empty(self, Build):
@@ -73,7 +73,7 @@ class BuildQueueTest(unittest.TestCase):
         self.assertFalse(self.queue.has_builds())
         build = Build()
         build._id = 1
-        self.queue.add_build(build)
+        self.queue.add_build(build._id)
         self.assertTrue(self.queue.has_builds())
         self.assertEqual(1, self.queue.next_build())
 
@@ -97,7 +97,7 @@ class BuildQueueTest(unittest.TestCase):
                 for el in self.elements:
                     build = Build()
                     build._id = el
-                    self.queue.add_build(build)
+                    self.queue.add_build(build._id)
 
         elements = range(10)
         thread_1 = TestThread(self.queue, elements[:5])

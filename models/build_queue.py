@@ -48,4 +48,7 @@ class BuildQueue(Queue):
     """
     def add_build(self, build):
         # returns boolean of whether build was successfully added
-        return self.put(build._id)
+        if type(build) is int or type(build) is str:
+            return self.put(build)
+        else:
+            return self.put(build['_id'])
