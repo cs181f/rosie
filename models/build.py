@@ -107,7 +107,7 @@ class Build(Document):
         matches = connection.Build.find({'_id': id})
 
     	if matches.count() == 1:
-    	    self = matches[0]
+    	    return matches[0]
     	elif matches.count() == 0:
     	    raise BuildErrorException("Found no matching documents.")
         else:

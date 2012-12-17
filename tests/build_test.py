@@ -131,43 +131,44 @@ class BuildTest(unittest.TestCase):
     	    test_build = Build()
     	    test_build.load_from_database(id=3)
 
- #    def test_build_retrieval(self):
- #        """ Tests that Build objects are correctly retrieved from the
- #            database given an ID (as would be used by the BuildQueue)
- #            checks for:
- #                correct Document retrieved
- #                valid JSON returned """
+    def test_build_retrieval(self):
+         """ Tests that Build objects are correctly retrieved from the
+             database given an ID (as would be used by the BuildQueue)
+             checks for:
+                 correct Document retrieved
+                 valid JSON returned """
 
- #        test_build = Build.new_from_json(self.json)
- #        test_build.save()
- #        self.fake_json['_id'] = saved_id
+         test_build = Build.new_from_json(self.json)
+         test_build.save()
 
- #        get_by_find = self.Build().find({'_id': saved_id})
- #        get_by_init = self.Build(id=saved_id)
+         get_build = Build.load_from_database(test_build._id)
 
- #        # check that they got the same thing
- #        self.assertEqual(get_by_find, get_by_init)
-	# # since we know they both match, we only have to check one of these
- #        self.assertEqual(get_by_find, json.dumps(self.fake_json))
+         # check that they got the same thing
+         self.assertEqual(get_build._id, test_build._id)
 
- #    def test_multiple_build_retrieval(self):
- #        """ Tests that retrieving multiple builds works correctly """
- #        # should not be smart enough to tell that matching json is the same build,
- #        # so we can populate the database with multiple copies of the same build :P
- #        pass
- #        test_build1_id = self.connection.Build().new_from_json(self.json).save()
- #        test_build2_id = self.connection.Build().new_from_json(self.json).save()
- #        self.connection.Build().new_from_json(self.json).save()
- #        self.connection.Build().new_from_json(self.json).save()
- #        self.connection.Build().new_from_json(self.json).save()
- #        self.connection.Build().new_from_json(self.json).save()
+    def test_multiple_build_retrieval(self):
+         """ Tests that retrieving multiple builds works correctly """
+         # should not be smart enough to tell that matching json is the same build,
+         # so we can populate the database with multiple copies of the same build :P
+         pass
+         save1 = Build.new_from_json(self.json)
+	 save1.save()
+         save2 = Build.new_from_json(self.json)
+	 save2.save()
+         Build.new_from_json(self.json).save()
+         Build.new_from_json(self.json).save()
+         Build.new_from_json(self.json).save()
+         Build.new_from_json(self.json).save()
 
- #        # test that we get the right ones
- #        get_build1 = self.Build(id=test_build1_id)
- #        get_build2 = self.Build(id=test_build2_id)
- #        self.assertNotEqual(get_build1['_id'], get_build2['_id'])
- #        self.assertEqual(get_build1['_id'], test_build1_id)
- #        self.assertEqual(get_build2['_id'], test_build2_id)
+         test_build1_id = save1['_id']
+	 test_build2_id = save2['_id']
+
+         # test that we get the right ones
+         get_build1 = Build.load_from_database(test_build1_id)
+         get_build2 = Build.load_from_database(test_build2_id)
+         self.assertNotEqual(get_build1['_id'], get_build2['_id'])
+         self.assertEqual(get_build1['_id'], test_build1_id)
+         self.assertEqual(get_build2['_id'], test_build2_id)
 
  #    def test_update_existing_build(self):
  #        """ Tests that updating a build with build results works correctly
